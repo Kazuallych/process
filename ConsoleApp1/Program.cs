@@ -1,4 +1,4 @@
-﻿////// See https://aka.ms/new-console-template for more information
+////// See https://aka.ms/new-console-template for more information
 ////Console.WriteLine("Hello, World!");
 
 
@@ -247,48 +247,164 @@
 //    }
 //}
 
+//using System.Diagnostics;
+//using System.Security.Cryptography;
+
+//Process[] processes = Process.GetProcesses();
+
+//foreach (Process process in processes)
+//{
+//    Console.Write("Name: " + process.ProcessName + "\tId: " + process.Id + "\tRAM: " + process.PagedMemorySize + "\tStatus: ");
+//    if (process.ProcessName.Length == 0)
+//    {
+//        Console.Write("Не робит");
+//    }
+//    else
+//    {
+//        Console.Write("Робит");
+//    }
+//    Console.WriteLine();
+//}
+//Console.Write("Введи ID процесса который хотите завершить: ");
+//int pid = int.Parse(Console.ReadLine());
+//Process p = Process.GetProcessById(pid);
+//Logger.Logging("Процесс убит " + p.ProcessName);
+//p.Kill();
+
+//Console.Write("Напишите название чтобы запустить программу: ");
+//string path = Console.ReadLine();
+//Process.Start(path);
+
+//Logger.Logging("Процесс запущен");
+
+//class Logger
+//{
+//    public static void Logging(string message)
+//    {
+//        string logPath = "process_log.txt";
+
+//        using (StreamWriter sw = new StreamWriter(logPath, true))
+//        {
+//            sw.WriteLine($"{DateTime.Now} {message}");
+//        }
+//    }
+//}
+
+
 using System.Diagnostics;
-using System.Security.Cryptography;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+Store store = new Store();
 
-Process[] processes = Process.GetProcesses();
-
-foreach (Process process in processes)
+while (true)
 {
-    Console.Write("Name: " + process.ProcessName + "\tId: " + process.Id + "\tRAM: " + process.PagedMemorySize + "\tStatus: ");
-    if (process.ProcessName.Length == 0)
+    Console.WriteLine("Выберите действие\n1.Добавить товар\n2.Просмотреть список товаров\n3.Найти товар по названию\n4.Продать товар\n5.Выход из программы");
+    int choose = int.Parse(Console.ReadLine());
+
+    switch (choose)
     {
-        Console.Write("Не робит");
-    }
-    else
-    {
-        Console.Write("Робит");
+        case 1:
+            Console.Write("Название товара: ");
+            string name = Console.ReadLine();
+            Console.Write("Цена товара: ");
+            double price = double.Parse(Console.ReadLine());
+            Console.Write("Количество товара: ");
+            int count = int.Parse(Console.ReadLine());
+            store.NewProduct(name, price, count);
+            break;
+        case 2:
+            store.List();
+            break;
+        case 3:
+            Console.Write("Введите название товара: ");
+            string name1 = Console.ReadLine();
+            store.Search(name1);
+            break;
+        case 4:
+            Console.WriteLine("Введите название товара, который хотите продать: ");
+            string name2 = Console.ReadLine();
+            Console.WriteLine("Введите сколько товара вы хотите продать: ");
+            int count1 = int.Parse(Console.ReadLine());
+            store.ChangeCount(name2, count1);
+            break;
+        case 5:
+            Environment.Exit(0);
+            break;
     }
     Console.WriteLine();
 }
-Console.Write("Введи ID процесса который хотите завершить: ");
-int pid = int.Parse(Console.ReadLine());
-Process p = Process.GetProcessById(pid);
-Logger.Logging("Процесс убит " + p.ProcessName);
-p.Kill();
 
-Console.Write("Напишите название чтобы запустить программу: ");
-string path = Console.ReadLine();
-Process.Start(path);
 
-Logger.Logging("Процесс запущен");
 
-class Logger
+struct Product()
 {
-    public static void Logging(string message)
+    public string name;
+    public double price;
+    public int count;
+    public Product NewProduct(string _name, double _price, int _count)
     {
-        string logPath = "process_log.txt";
+        name = _name;
+        count = _count;
+        price = _price;
+        return this;
+    }
+    public void ChangePrice(double _price)
+    {
+        price = _price ;
+    }
+    public void ChangeCount(int _count)
+    {
+        count -= _count;
+        Console.WriteLine($"Осталось продуктов: {count}");
+    }
 
-        using (StreamWriter sw = new StreamWriter(logPath, true))
+
+}
+
+
+class Store()
+{
+    List<Product> products = new List<Product>();
+
+    public void NewProduct(string name, double price, int count)
+    {
+        products.Add(new Product().NewProduct(name, price, count));
+    }
+
+    public void List()
+    {
+        foreach (Product p in products)
         {
-            sw.WriteLine($"{DateTime.Now} {message}");
+            Console.WriteLine($"Название:{p.name}|Цена:{p.price}|Количество:{p.count}");
+        }
+    }
+
+    public void Search(string name)
+    {
+        foreach (Product p in products)
+        {
+            if(name==p.name)
+            {
+                Console.WriteLine($"Название:{p.name}|Цена:{p.price}|Количество:{p.count}");
+                break;
+            }
+        }
+    }
+
+    public void ChangeCount(string name, int count)
+    {
+        foreach(Product p in products)
+        {
+            if(p.name==name)
+            {
+                p.ChangeCount(count);
+            }
         }
     }
 }
+
+
+
 
 
 
